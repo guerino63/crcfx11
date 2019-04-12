@@ -1,0 +1,38 @@
+
+plugins {
+    id 'application'
+    id 'org.openjfx.javafxplugin' version '0.0.7'
+}
+
+mainClassName = 'it.ma.macrcfx.Launcher'
+
+group 'it.ma'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+javafx {
+    modules = [ 'javafx.controls', 'javafx.fxml' ]
+}
+configurations {
+    customConfig.extendsFrom implementation
+}
+dependencies {
+    implementation group: 'commons-codec', name: 'commons-codec', version: '1.12'
+}
+
+//create a single Jar with all dependencies
+task fatJar(type: Jar) {
+    manifest {
+        attributes 'Implementation-Title': 'Check CRC MD5, SHA(1)..(512)',
+                'Implementation-Version': version,
+                'Main-Class': "$mainClassName"
+    }
+    baseName = project.name + '-all'
+    from { configurations.customConfig.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+}
